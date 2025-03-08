@@ -37,7 +37,7 @@ REFRESH_TOKEN_EXPIRE_DAYS = 7
 # Email configuration from environment variables
 EMAIL_CONF = ConnectionConfig(
     MAIL_USERNAME=os.getenv("MAIL_USERNAME", "default_email@gmail.com"),
-    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD", "default_password"), 
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD", "default_password"),  # type: ignore
     MAIL_FROM=os.getenv("MAIL_FROM", "default_email@gmail.com"),
     MAIL_SERVER=os.getenv("MAIL_SERVER", "smtp.gmail.com"),
     MAIL_PORT=int(os.getenv("MAIL_PORT", 465)),
