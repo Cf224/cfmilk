@@ -3,8 +3,10 @@ from pymongo.mongo_client import MongoClient
 from fastapi_mail import ConnectionConfig
 from dotenv import load_dotenv
 
-load_dotenv("D:\\cfmilk\\cfmilk\\.env")
-MONGO_URI = os.getenv("MONGO_URI")
+# load_dotenv("D:\\cfmilk\\cfmilk\\.env")
+# MONGO_URI = os.getenv("MONGO_URI")
+#  praveen03@admin
+MONGO_URI = "mongodb+srv://praveen03:2024Admin@cluster0.ztr6g.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 if not MONGO_URI:
     raise ValueError("Mongo URI is not set in the .env file!")
