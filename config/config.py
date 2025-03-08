@@ -3,7 +3,7 @@ from pymongo.mongo_client import MongoClient
 from fastapi_mail import ConnectionConfig
 from dotenv import load_dotenv
 
-load_dotenv("C:\\Users\\PRAVEEN\\OneDrive\\Desktop\\A\\.env")
+load_dotenv("D:\\cfmilk\\cfmilk\\.env")
 MONGO_URI = os.getenv("MONGO_URI")
 
 if not MONGO_URI:
@@ -37,7 +37,7 @@ REFRESH_TOKEN_EXPIRE_DAYS = 7
 # Email configuration from environment variables
 EMAIL_CONF = ConnectionConfig(
     MAIL_USERNAME=os.getenv("MAIL_USERNAME", "default_email@gmail.com"),
-    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD", "default_password"),
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD", "default_password"), 
     MAIL_FROM=os.getenv("MAIL_FROM", "default_email@gmail.com"),
     MAIL_SERVER=os.getenv("MAIL_SERVER", "smtp.gmail.com"),
     MAIL_PORT=int(os.getenv("MAIL_PORT", 465)),
