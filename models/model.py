@@ -1,18 +1,18 @@
 from pydantic import BaseModel, Field, EmailStr, constr
-from typing import List, Optional
+from typing import List, Optional,Dict,Any
 from datetime import datetime
+
 
 
 # 1. User Model
 class User(BaseModel):
-    user_id: constr(pattern="^user\d+$") = Field(...) #type:ignore # Pattern like user1, user2, etc.
+    user_id: constr(pattern="^user\d+$") = Field(...) #type:ignore
     username: str = Field(..., min_length=3, max_length=50)
     phone_number: str = Field(...)
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 # 2. Product Model
 class Product(BaseModel):
-    product_id: str
     name: str
     category_id: str
     price: float
@@ -83,13 +83,11 @@ class OrderStatus(BaseModel):
 
 # 10. Category Model
 class Category(BaseModel):
-    category_id: constr(pattern="^category\d+$") = Field(...)#type:ignore  # Pattern like category1, category2, etc.
-    name: str = Field(..., min_length=2, max_length=50)
+    name: str 
+    description: Dict[str, Any]
+    measurement : str
+ 
 
-
-# --------------------
-# MongoDB Optimization
-# --------------------
 def create_indexes(db):
     db.users.create_index("phone_number", unique=True)
     db.products.create_index("category")
