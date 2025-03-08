@@ -13,6 +13,7 @@ def get_next_id(collection, id_field):
 
 
 
+
 @admin_router.post("/admin/category/add")
 def add_category(category: Category):
     existing_category = category_collection.find_one({"name": category.name})

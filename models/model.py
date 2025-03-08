@@ -4,14 +4,14 @@ from datetime import datetime
 
 
 
-# 1. User Model
+
 class User(BaseModel):
     user_id: constr(pattern="^user\d+$") = Field(...) #type:ignore
     username: str = Field(..., min_length=3, max_length=50)
     phone_number: str = Field(...)
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-# 2. Product Model
+
 class Product(BaseModel):
     name: str
     category_id: str
@@ -19,14 +19,14 @@ class Product(BaseModel):
     stock: int
     description: str
 
-# 3. Order Item Model
+
 class OrderItem(BaseModel):
     product_id: str
     product_name: str
     quantity: int
     price: float
 
-# 4. Order Model
+
 
 class Order(BaseModel):
     order_id: str
@@ -37,7 +37,7 @@ class Order(BaseModel):
     status: str = Field(default="pending")
     order_date: datetime = Field(default_factory=datetime.utcnow)
 
-# 5. Order History Model
+
 class OrderHistory(BaseModel):
     user_id: str
     order_id: str
@@ -46,7 +46,6 @@ class OrderHistory(BaseModel):
     status: str
     order_date: datetime
 
-# 6. Subscription Model
 class Subscription(BaseModel):
     user_id: str
     product_id: str
@@ -54,16 +53,15 @@ class Subscription(BaseModel):
     frequency: str  # daily, weekly, monthly
     next_delivery_date: datetime
 
-# 7. Email Request Model
+
 class EmailRequest(BaseModel):
     email: EmailStr
 
-# 8. OTP Verification Model
+
 class OtpVerification(BaseModel):
     email: EmailStr
     otp: int
 
-# 9. Profile Update Model
 class ProfileUpdate(BaseModel):
     username: Optional[str] = None
     phone_number: Optional[str] = None
@@ -81,7 +79,7 @@ class RegisterForm(BaseModel):
 class OrderStatus(BaseModel):
     status: str
 
-# 10. Category Model
+
 class Category(BaseModel):
     name: str 
     description: Dict[str, Any]
