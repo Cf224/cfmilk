@@ -69,6 +69,7 @@ class ProfileUpdate(BaseModel):
     age: Optional[int] = None
     gender: Optional[str] = None
 
+
 class RegisterForm(BaseModel):
     full_name: str
     phone_number: str

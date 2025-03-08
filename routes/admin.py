@@ -6,7 +6,6 @@ from datetime import datetime
 admin_router = APIRouter()
 
 
-# Function to auto-generate sequential IDs
 def get_next_id(collection, id_field):
     last_entry = collection.find_one({}, sort=[(id_field, -1)])
     return last_entry[id_field] + 1 if last_entry else 1
@@ -37,7 +36,7 @@ def add_category(category: Category):
     next_category_id = get_next_id(category_collection, "category_id")
 
     category_data = category.dict()
-    category_data["category_id"] = next_category_id  # Assign integer category_id
+    category_data["category_id"] = next_category_id 
 
     category_collection.insert_one(category_data)
     return {"message": "Category added successfully", "category_id": next_category_id}
