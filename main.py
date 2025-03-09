@@ -9,13 +9,16 @@ from routes.admin import admin_router as admin
 from routes.home import home_router as home
 from routes.subscription import subscription_router as subscription
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Frontend origin
-    allow_credentials=True,                   # Allow cookies/auth if needed
-    allow_methods=["GET", "POST", "OPTIONS"], # Allowed HTTP methods
-    allow_headers=["Content-Type"],           # Allowed headers (adjust if needed)
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 app.mount("/upload_image", StaticFiles(directory="uploads_image"), name="upload_image")
 
