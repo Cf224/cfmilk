@@ -33,6 +33,7 @@ def add_category(category: Category):
             "category_id": existing_category["category_id"]
         }
 
+
     next_category_id = get_next_id(category_collection, "category_id")
 
     category_data = category.dict()

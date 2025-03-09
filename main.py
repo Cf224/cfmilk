@@ -11,12 +11,17 @@ from routes.subscription import subscription_router as subscription
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:3000",  # Allow frontend origin for development
+    # Add your production frontend URL here, e.g., "https://your-frontend.com"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Frontend origin
-    allow_credentials=True,                   # Allow cookies/auth if needed
-    allow_methods=["GET", "POST", "OPTIONS"], # Allowed HTTP methods
-    allow_headers=["Content-Type"],           # Allowed headers (adjust if needed)
+    allow_origins=origins,
+    allow_credentials=True,  # Needed for Authorization headers (Bearer token)
+    allow_methods=["*"],     # Allow all methods (GET, POST, OPTIONS, etc.)
+    allow_headers=["*"],     # Allow all headers (e.g., Authorization, Content-Type)
 )
 
 app.mount("/upload_image", StaticFiles(directory="uploads_image"), name="upload_image")

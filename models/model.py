@@ -70,6 +70,7 @@ class ProfileUpdate(BaseModel):
     gender: Optional[str] = None
 
 
+
 class RegisterForm(BaseModel):
     full_name: str
     phone_number: str
