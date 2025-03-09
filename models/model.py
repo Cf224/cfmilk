@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, EmailStr, constr
-from typing import List, Optional,Dict,Any
+from typing import  Optional,Dict,Any
 from datetime import datetime
 
 
@@ -13,11 +13,11 @@ class User(BaseModel):
 
 
 class Product(BaseModel):
-    name: str
-    category_id: str
+    name : str
+    category_name: str
     price: float
     stock: int
-    description: str
+    description: Dict[str,Any]
 
 
 class OrderItem(BaseModel):
@@ -38,13 +38,7 @@ class Order(BaseModel):
     order_date: datetime = Field(default_factory=datetime.utcnow)
 
 
-class OrderHistory(BaseModel):
-    user_id: str
-    order_id: str
-    items: List[OrderItem]
-    total_price: float
-    status: str
-    order_date: datetime
+
 
 class Subscription(BaseModel):
     user_id: str

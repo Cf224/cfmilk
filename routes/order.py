@@ -7,10 +7,10 @@ from routes.user import get_live_location
 
 order_router = APIRouter()
 
-# 1️⃣ Place Order for Current User
+
 @order_router.post("/my-orders/place_order")
 def place_order(order: Order, current_user: dict = Depends(get_current_user)):
-    # Validate product
+   
     product = product_collection.find_one({"product_id": order.product_id})
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
