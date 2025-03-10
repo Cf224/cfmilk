@@ -7,7 +7,7 @@ product_router = APIRouter()
 # Add Product
 @product_router.post("/add")
 def add_product(product: Product):
-    if product_collection.find_one({"product_id": product.product_id}):
+    if product_collection.find_one({"product_id": product.name}):
         raise HTTPException(status_code=400, detail="Product ID already exists")
     product_collection.insert_one(product.dict())
     return {"message": "Product added successfully"}

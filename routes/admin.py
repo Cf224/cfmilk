@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from config.config import category_collection, product_collection, order_collection
-from models.model import Category, Product
+from models.model import Category, CategoryUpdate, Product, ProductUpdate
 
 
 admin_router = APIRouter()
@@ -16,20 +16,7 @@ def add_category(category: Category):
     existing_category = category_collection.find_one({"name": category.name})
 
     if existing_category:
-        # Update description and measurement fields
-        update_data = {
-            "description": category.description,
-            "measurement": category.measurement
-        }
-        
-        category_collection.update_one(
-            {"name": category.name},
-            {"$set": update_data}
-        )
-        return {
-            "message": "Category already exists, details updated",
-            "id": existing_category["id"]
-        }
+        raise HTTPException(status_code=400,detail="category already exists")
 
 
     next_category_id = get_next_id(category_collection, "id")
@@ -39,6 +26,27 @@ def add_category(category: Category):
 
     category_collection.insert_one(category_data)
     return {"message": "Category added successfully", "id": next_category_id}
+
+@admin_router.patch("/admin/category/update/{id}")
+def update_category(id: int, category: CategoryUpdate):
+    existing_category = category_collection.find_one({"id": int(id)})  # Ensure id is an integer
+
+    if not existing_category:
+        raise HTTPException(status_code=404, detail="Category not found")
+
+    update_data = {}
+    if category.name:
+        update_data["name"] = category.name
+    if category.description:
+        update_data["description"] = category.description
+    if category.measurement:
+        update_data["measurement"] = category.measurement
+
+    if update_data:
+        category_collection.update_one({"id": int(id)}, {"$set": update_data})  # Ensure id is int
+        return {"message": "Category updated successfully", "id": id}
+    
+    return {"message": "No changes made"}
 
 @admin_router.get("/admin/categories")
 def get_all_categories():
@@ -63,21 +71,8 @@ def add_product(product: Product):
     existing_product = product_collection.find_one({"name" : product.name})
     
     if existing_product:
-        update_data = {
-            "description": product.description,
-            "stock":product.stock,
-            "price":product.price
-        }
-
-        product_collection.update_one(
-            {"name":product.name},
-            {"$set": update_data}
-        )
+        raise HTTPException(status_code=400,detail="Product already exist")
         
-        return {
-            "message": "Category already exists, details updated",
-            "id": existing_product["id"]
-        }
     next_product_id = get_next_id(product_collection,"id")
     product_data = product.dict()
     product_data["id"] = next_product_id
@@ -91,8 +86,35 @@ def add_product(product: Product):
         "stock":product_data["stock"]
     }
 
+@admin_router.patch("/admin/product/{id}")
+def update_products(id:int,product:ProductUpdate):
+    existing_product = product_collection.find_one({"id":int(id)})
+    
+    if not existing_product:
+        raise HTTPException(status_code=404,detail="Product Not Found")
+    
+    update_data = {}
+    
+    if product.name:
+        update_data["name"] = product.name
+    if product.category_name:
+        update_data["category_name"] = product.category_name
+    if product.price:
+        update_data["price"] = product.price
+    if product.stock:
+        update_data["stock"] = product.stock
+    if product.description:
+        update_data["description"] = product.description                     
+    
+    if update_data:
+        product_collection.update_one({"id": int(id)}, {"$set": update_data})  
+        return {"message": "Product updated successfully", "id": id}
+    
+    return {"message": "No changes made"}    
+        
+        
 
-
+    
 @admin_router.get("/admin/products")
 def get_all_products():
     return list(product_collection.find({}, {"_id": 0}))

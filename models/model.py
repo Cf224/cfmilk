@@ -19,6 +19,13 @@ class Product(BaseModel):
     stock: int
     description: Dict[str,Any]
 
+class ProductUpdate(BaseModel):
+    name : Optional[str] = None
+    category_name:Optional[str]=None
+    price: Optional[float] = None
+    stock: Optional[int] = None
+    description: Optional[Dict[str,Any]] = None
+
 
 class OrderItem(BaseModel):
     product_id: str
@@ -44,7 +51,7 @@ class Subscription(BaseModel):
     user_id: str
     product_id: str
     quantity: int
-    frequency: str  # daily, weekly, monthly
+    frequency: str 
     next_delivery_date: datetime
 
 
@@ -80,6 +87,11 @@ class Category(BaseModel):
     name: str 
     description: Dict[str, Any]
     measurement : str
+
+class CategoryUpdate(BaseModel):
+    name: Optional[str] = None 
+    description: Optional[Dict[str, Any]] = None
+    measurement : Optional[str] = None
  
 
 def create_indexes(db):
