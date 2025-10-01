@@ -13,7 +13,7 @@ def add_product(product: Product):
     return {"message": "Product added successfully"}
 
 # Get All Products
-@product_router.get("/")
+@product_router.get("/products")
 def get_all_products():
     return list(product_collection.find({}, {"_id": 0}))
 
