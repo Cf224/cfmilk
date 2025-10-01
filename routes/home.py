@@ -5,7 +5,6 @@ import shutil
 
 home_router = APIRouter()
 
-# Directory to store uploaded images
 UPLOAD_DIR = "uploads_image"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -15,15 +14,16 @@ offers_db = []
 @home_router.post("/upload/")
 async def upload_offer(file: UploadFile = File(...), offer: str = Form("")):
     """Upload an image with an offer description."""
-    # Ensure the filename is a string
+   
     file_name = str(file.filename)
     file_path = os.path.join(UPLOAD_DIR, file_name)
 
-    # Save the uploaded file
+
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    # Store offer details
+
+   
     offer_data = {
         "filename": file_name,
         "offer": offer,

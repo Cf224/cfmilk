@@ -53,6 +53,7 @@ def register_user(user: RegisterForm):
     return {"message": "User registered successfully", "address": live_address}
 
 
+
 @user_router.patch("/update-profile")
 def update_profile(
     user_data: ProfileUpdate, current_user: dict = Depends(get_current_user)

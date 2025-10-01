@@ -34,6 +34,7 @@ app.include_router(home)
 app.include_router(subscription)
 
 
+
 @app.get("/")
 async def start():
     return {"message": "Hello User..!"}

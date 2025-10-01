@@ -29,7 +29,7 @@ def add_category(category: Category):
 
 @admin_router.patch("/admin/category/update/{id}")
 def update_category(id: int, category: CategoryUpdate):
-    existing_category = category_collection.find_one({"id": int(id)})  # Ensure id is an integer
+    existing_category = category_collection.find_one({"id": int(id)})  
 
     if not existing_category:
         raise HTTPException(status_code=404, detail="Category not found")
@@ -43,7 +43,7 @@ def update_category(id: int, category: CategoryUpdate):
         update_data["measurement"] = category.measurement
 
     if update_data:
-        category_collection.update_one({"id": int(id)}, {"$set": update_data})  # Ensure id is int
+        category_collection.update_one({"id": int(id)}, {"$set": update_data})  
         return {"message": "Category updated successfully", "id": id}
     
     return {"message": "No changes made"}

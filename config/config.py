@@ -6,6 +6,7 @@ from fastapi_mail import ConnectionConfig
 MONGO_URI = "mongodb+srv://praveen03:2024Admin@cluster0.ztr6g.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 if not MONGO_URI:
+    
     raise ValueError("Mongo URI is not set in the .env file!")
 
 

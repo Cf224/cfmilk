@@ -27,6 +27,7 @@ def subscribe(plan: str, current_user: dict = Depends(get_current_user)):
 
     expiry_date = datetime.utcnow() + timedelta(days=PLANS[plan])
 
+
     subscription_data = {
         "user_id": user_id,
         "username": username,

@@ -60,6 +60,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
 
 
+
 @router.post("/login")
 async def send_otp(request: EmailRequest):
     email = request.email

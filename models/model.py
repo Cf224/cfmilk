@@ -49,6 +49,7 @@ class Subscription(BaseModel):
     next_delivery_date: datetime
 
 
+
 class EmailRequest(BaseModel):
     email: EmailStr
 

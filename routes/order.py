@@ -98,17 +98,16 @@ def update_order_status(
             detail="Order not found or does not belong to the current user",
         )
 
-    # Update the order status
+    
     order_collection.update_one(
         {"order_id": order_id}, {"$set": {"status": status_data.status}}
     )
 
-    # If the status is 'delivered', delete from order_collection and update order_history
+    
     if status_data.status == "delivered":
-        # Remove from order_collection
+        
         order_collection.delete_one({"order_id": order_id})
-
-        # Update order_history with status 'complete'
+        
         order["status"] = "complete"
         order_history_collection.update_one(
             {"order_id": order_id}, {"$set": order}, upsert=True
