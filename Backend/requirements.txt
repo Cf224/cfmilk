@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+jwt
+sqlalchemy
+mysql-connector-python
+python-jose[cryptography]
+python-dotenv
