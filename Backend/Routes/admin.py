@@ -178,6 +178,7 @@ async def get_all_product(
     return {"users": result}
 
 
+
 @admin_router.post("/admin/add_product",tags=["Admin"])
 async def add_product(
     request: CreateProductRequest,

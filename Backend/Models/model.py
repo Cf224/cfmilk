@@ -110,7 +110,7 @@ class Category(Base):
     status = Column(Boolean ,default=True)
 
 
-# ---------- PRODUCTS ----------
+# ---------- PRODUCTS ---------
 class Product(Base):
     __tablename__ = 'products'
     id = Column(Integer, primary_key=True, autoincrement=True)

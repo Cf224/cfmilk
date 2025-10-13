@@ -14,7 +14,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 # Predefined admin phone
 ADMIN_PHONE = "8148530305"
 
-# ---------------- Database Dependency ----------------
+# ---------------- Database Dependency ---------------
 def get_db():
     db = SessionLocal()
     try:
