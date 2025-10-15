@@ -13,12 +13,12 @@ class PhoneRequest(BaseModel):
 
 class OtpVerification(BaseModel):
     phone: str = Field(min_length=10,max_length=15)
-    otp: int 
+    otp: int
 
 class CreateUserRequest(BaseModel):
     user_name: str = Field(min_length=3,max_length=50,pattern="^[a-zA-Z]")
     phone: str = Field(min_length=10,max_length=15)
-    role_name: str = Literal["customer", "supplier","delivery"]
+    role_name: str = Literal["customer", "supplier","delivery"] # type: ignore
 
 class CreateCategoryRequest(BaseModel):
     category_name : str = Field(min_length=3,max_length=50,pattern="^[a-zA-Z]")
@@ -36,19 +36,26 @@ class CreateProductRequest(BaseModel):
     image_url: Optional[str] = None   
     status: Literal["active", "inactive"] = "active"
     
+class CustomerUpdate(BaseModel):
+    user_name: Optional[str] = Field(...,min_length=3,max_length=50,pattern="^[a-zA-Z]")
+    phone : Optional[str] = Field(...,min_length=10,max_length=15)
+    address : Optional[str] = Field(...,min_length=10,max_length=500)
+    
+    
 class Role(Base):
     __tablename__ = 'roles'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
     description = Column(Text)
     users = relationship("User", back_populates="role_rel")
+    
 
 
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, autoincrement=True)
 
-    # Foreign key linking to Role
+
     role_id = Column(Integer, ForeignKey('roles.id'), nullable=True)
 
     user_id = Column(String(50), unique=True)
@@ -70,6 +77,8 @@ class User(Base):
     status = Column(Boolean,default=True)
 
     # Relationships
+    customer_rel = relationship("Customer", back_populates="user", uselist=False)
+
     role_rel = relationship("Role", back_populates="users")  
     supplier = relationship("Supplier", back_populates="user", uselist=False)
     orders = relationship("Order", back_populates="customer")
@@ -81,12 +90,27 @@ class User(Base):
         super().__init__(**kwargs)
         
         
+
+class Customer(Base):
+    __tablename__ = "customers"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(String(50), ForeignKey("users.user_id"), unique=True)  
+    user_name = Column(String(100), nullable=False)
+    phone  = Column(String(15), nullable=True)
+    address = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationship to User
+    user = relationship("User", back_populates="customer_rel")
+
 # ---------- SUPPLIERS ----------
 class Supplier(Base):
     __tablename__ = 'suppliers'
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    company_name = Column(String(100))
+    Supplier_name = Column(String(100))
     contact = Column(String(15))
     address = Column(String(255))
     active = Column(Boolean, default=True)

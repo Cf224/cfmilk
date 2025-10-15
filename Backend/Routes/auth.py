@@ -6,13 +6,20 @@ from jose import jwt, JWTError
 import random
 
 from Backend.config import SessionLocal, ALGORITHM, SECRET_KEY
-from Backend.Models.model import User as UserModel, Role as RoleModel, PhoneRequest, OtpVerification
+from Backend.Models.model import (
+    User as UserModel,
+    Role as RoleModel,
+    PhoneRequest,
+    OtpVerification,
+    Customer,
+)
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 # Predefined admin phone
 ADMIN_PHONE = "8148530305"
+
 
 # ---------------- Database Dependency ---------------
 def get_db():
@@ -23,7 +30,6 @@ def get_db():
         db.close()
 
 
-# ---------------- Helper Functions ----------------
 def create_access_token(data: dict):
     """Generate JWT access token"""
     to_encode = data.copy()
@@ -40,7 +46,9 @@ def decode_token(token: str):
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
     payload = decode_token(token)
     user_id = payload.get("user_id")
     if user_id is None:
@@ -52,7 +60,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 
 
 # ---------------- OTP Login ----------------
-@router.post("/login",tags=["Login"])
+@router.post("/login", tags=["Login"])
 async def send_otp(request: PhoneRequest, db: Session = Depends(get_db)):
     phone = request.phone
     otp = random.randint(100000, 999999)
@@ -78,7 +86,7 @@ async def send_otp(request: PhoneRequest, db: Session = Depends(get_db)):
     # Create or update user
     if not user:
         last_user = db.query(UserModel).order_by(UserModel.id.desc()).first()
-        next_id = 1001 if not last_user else int(last_user.user_id[4:]) + 1
+        next_id = 1001 if not last_user else int(last_user.user_id[4:]) + 1  # type:ignore
         user_id = f"user{next_id}"
         user = UserModel(
             user_id=user_id,
@@ -87,37 +95,52 @@ async def send_otp(request: PhoneRequest, db: Session = Depends(get_db)):
             role_id=role.id,
             otp=otp,
             otp_expiry=expiry_time,
-            is_verified=False
+            is_verified=False,
         )
         db.add(user)
         db.commit()
         db.refresh(user)
+
+        if role.name == "customer":  # type:ignore
+            existing_customer = (
+                db.query(Customer).filter(Customer.user_id == user.user_id).first()
+            )
+            if not existing_customer:
+                new_customer = Customer(
+                    user_id=user.user_id,
+                    user_name=username,
+                    phone=phone,
+                    address="",
+                    created_at=datetime.utcnow(),
+                )
+                db.add(new_customer)
+                db.commit()
+
     else:
-        user.otp = otp
-        user.otp_expiry = expiry_time
+        user.otp = otp  # type:ignore
+        user.otp_expiry = expiry_time  # type:ignore
         db.commit()
 
     print(f"[{role.name.upper()} OTP] Phone: {phone}, OTP: {otp}")
-    return {"message": f"OTP sent successfully for {role.name}","otp":otp}
+    return {"message": f"OTP sent successfully for {role.name}", "otp": otp}
 
 
 # ---------------- OTP Verification ----------------
-@router.post("/verify-otp",tags=["Login"])
+@router.post("/verify-otp", tags=["Login"])
 async def verify_otp(request: OtpVerification, db: Session = Depends(get_db)):
     user = db.query(UserModel).filter(UserModel.phone == request.phone).first()
 
-    if not user or user.otp != request.otp or user.otp_expiry < datetime.utcnow():
+    if not user or user.otp != request.otp or user.otp_expiry < datetime.utcnow():  # type:ignore
         raise HTTPException(status_code=400, detail="Invalid or expired OTP")
 
-    user.is_verified = True
-    user.otp = None
-    user.otp_expiry = None
+    user.is_verified = True  # type:ignore
+    user.otp = None  # type:ignore
+    user.otp_expiry = None  # type:ignore
     db.commit()
 
-    access_token = create_access_token({
-        "user_id": user.user_id,
-        "role_id": user.role_id
-    })
+    access_token = create_access_token(
+        {"user_id": user.user_id, "role_id": user.role_id}
+    )
 
     role = db.query(RoleModel).filter(RoleModel.id == user.role_id).first()
 
@@ -128,5 +151,5 @@ async def verify_otp(request: OtpVerification, db: Session = Depends(get_db)):
         "user_id": user.user_id,
         "role_id": user.role_id,
         "role_name": role.name if role else "unknown",
-        "message": f"{role.name.capitalize() if role else 'User'} verified successfully"
+        "message": f"{role.name.capitalize() if role else 'User'} verified successfully",
     }

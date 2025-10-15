@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,File, UploadFile
 from Backend.Models.model import (
     User,
     Role,
     Product,
     Category,
+    Supplier,
     CreateCategoryRequest,
     CreateUserRequest,
     CreateProductRequest,
@@ -24,8 +25,15 @@ def get_db():
         db.close()
 
 
-# User Api
+@admin_router.post("/admin/upload_img")
+async def upload_img( file:UploadFile = File(...), current_user: User = Depends(get_current_user)):
+    admin_role = current_user.role_rel.name if current_user.role_rel else ""
+    if admin_role != "admin":
+        raise HTTPException(status_code=403, detail="Only admin can Upload imgage")
 
+    
+
+# User Api
 
 @admin_router.get("/admin/users", tags=["Admin"])
 async def get_all_users(
@@ -98,7 +106,7 @@ async def get_users_by_role(
 async def add_user(
     request: CreateUserRequest,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: Supplier = Depends(get_current_user),
 ):
     admin_role = current_user.role_rel.name if current_user.role_rel else ""
     if admin_role != "admin":
@@ -108,17 +116,17 @@ async def add_user(
     if not role or request.role_name not in ["supplier", "delivery"]:
         raise HTTPException(status_code=400, detail="Invalid role to add")
 
-    existing_user = db.query(User).filter(User.phone == request.phone).first()
+    existing_user = db.query(Supplier).filter(Supplier.phone == request.phone).first()
     if existing_user:
         raise HTTPException(
             status_code=400, detail="User with this phone already exists"
         )
 
-    last_user = db.query(User).order_by(User.id.desc()).first()
-    next_id = 1001 if not last_user else int(last_user.user_id[4:]) + 1
+    last_user = db.query(Supplier).order_by(Supplier.id.desc()).first()
+    next_id = 1001 if not last_user else int(last_user.user_id[4:]) + 1 #type:ignore
     user_id = f"user{next_id}"
 
-    new_user = User(
+    new_user = Supplier(
         user_id=user_id,
         user_name=request.user_name,
         phone=request.phone,
@@ -178,14 +186,12 @@ async def get_all_product(
     return {"users": result}
 
 
-
-@admin_router.post("/admin/add_product",tags=["Admin"])
+@admin_router.post("/admin/add_product", tags=["Admin"])
 async def add_product(
     request: CreateProductRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-
     # Check admin
     admin_role = current_user.role_rel.name if current_user.role_rel else ""
     if admin_role != "admin":
@@ -197,7 +203,9 @@ async def add_product(
         raise HTTPException(status_code=404, detail="Category not found")
 
     # Check duplicate product
-    existing_product = db.query(Product).filter(Product.name == request.product_name).first()
+    existing_product = (
+        db.query(Product).filter(Product.name == request.product_name).first()
+    )
     if existing_product:
         raise HTTPException(status_code=400, detail="This product already exists")
 
@@ -215,7 +223,7 @@ async def add_product(
         unit=request.unit,
         stock=request.stock,
         supplier_id=request.supplier_id,
-        category_id=category.id,  
+        category_id=category.id,
         image_url=request.image_url,
         created_at=datetime.utcnow(),
         status=request.status,
@@ -231,8 +239,9 @@ async def add_product(
         "price": request.price,
         "unit": request.unit,
         "stock": request.stock,
-        "status": request.status
+        "status": request.status,
     }
+
 
 @admin_router.get("/admin/all_Category", tags=["Admin"])
 async def all_Category(
@@ -279,14 +288,13 @@ async def add_category(
         raise HTTPException(status_code=400, detail="This category already exists")
 
     last_category = db.query(Category).order_by(Category.id.desc()).first()
-    next_id = 1001 if not last_category else int(last_category.category_id[8:]) + 1
+    next_id = 1001 if not last_category else int(last_category.category_id[8:]) + 1  #type:ignore
     category_id = f"Category{next_id}"
 
     new_category = Category(
         category_id=category_id,
         name=request.category_name,
         description=request.description,
-       
         created_at=datetime.utcnow(),
     )
 
