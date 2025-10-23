@@ -1,22 +1,23 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from dotenv import load_dotenv
 import os
 
 # SECRET_KEY = os.getenv("SECRET_KEY")
 # ALGORITHM = os.getenv("ALGORITHM")
 # DATABASE_URL = os.getenv("DATABASE_URL")
-
+load_dotenv()
 ADMIN_PHONE = os.getenv("ADMIN_PHONE")
 
-SECRET_KEY = ""
-ALGORITHM = "HS256"
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 
-USERNAME = "root"
-PASSWORD = "Test%40123"
-HOST = "localhost:3306"
-DB_NAME = "cf_milk"
+USERNAME = os.getenv("USERNAME").strip() # type: ignore
+PASSWORD = os.getenv("PASSWORD").strip() # type: ignore
+HOST = os.getenv("HOST").strip() # type: ignore
+DB_NAME = os.getenv("DB_NAME").strip() # type: ignore
 
-DATABASE_URL = f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{HOST}/{DB_NAME}"
+DATABASE_URL = f"mysql+mysqlconnector://sql12804224:{PASSWORD}@{HOST}/{DB_NAME}"
 
 
 engine = create_engine(DATABASE_URL, echo=True)

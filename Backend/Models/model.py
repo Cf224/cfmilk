@@ -1,70 +1,38 @@
 from datetime import datetime
-from typing import Literal,Optional
 from sqlalchemy import (
-    Column, Integer, String, Text, ForeignKey, DECIMAL, Boolean, Enum, DateTime
+    Column,
+    Integer,
+    String,
+    Text,
+    ForeignKey,
+    DECIMAL,
+    Boolean,
+    Enum,
+    DateTime,
 )
 from sqlalchemy.orm import relationship
 from Backend.config import Base
-from pydantic import BaseModel,Field
 
 
-class PhoneRequest(BaseModel):
-    phone: str
-
-class OtpVerification(BaseModel):
-    phone: str = Field(min_length=10,max_length=15)
-    otp: int
-
-class CreateUserRequest(BaseModel):
-    user_name: str = Field(min_length=3,max_length=50,pattern="^[a-zA-Z]")
-    phone: str = Field(min_length=10,max_length=15)
-    role_name: str = Literal["customer", "supplier","delivery"] # type: ignore
-
-class CreateCategoryRequest(BaseModel):
-    category_name : str = Field(min_length=3,max_length=50,pattern="^[a-zA-Z]")
-    description : str 
-    status: Literal["active", "inactive"] = "active"
-    
-class CreateProductRequest(BaseModel):
-    product_name: str = Field(..., min_length=3, max_length=100)
-    description: Optional[str] = None
-    price: float
-    unit: str
-    stock: int = 0
-    category_name: str
-    supplier_id: Optional[int] = None
-    image_url: Optional[str] = None   
-    status: Literal["active", "inactive"] = "active"
-    
-class CustomerUpdate(BaseModel):
-    user_name: Optional[str] = Field(...,min_length=3,max_length=50,pattern="^[a-zA-Z]")
-    phone : Optional[str] = Field(...,min_length=10,max_length=15)
-    address : Optional[str] = Field(...,min_length=10,max_length=500)
-    
-    
 class Role(Base):
-    __tablename__ = 'roles'
+    __tablename__ = "roles"
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
     description = Column(Text)
     users = relationship("User", back_populates="role_rel")
-    
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
     id = Column(Integer, primary_key=True, autoincrement=True)
-
-
-    role_id = Column(Integer, ForeignKey('roles.id'), nullable=True)
-
+    role_id = Column(Integer, ForeignKey("roles.id"), nullable=True)
     user_id = Column(String(50), unique=True)
     user_name = Column(String(100), nullable=False)
     # role = Column(Enum('admin', 'customer', 'supplier', 'delivery'))
     phone = Column(String(15), unique=True, nullable=False)
-    role_id = Column(Integer, ForeignKey('roles.id'), nullable=False)
+    role_id = Column(Integer, ForeignKey("roles.id"), nullable=False)
     role_rel = relationship("Role", back_populates="users")
-    
+
     otp = Column(Integer, nullable=True)
     otp_expiry = Column(DateTime, nullable=True)
     is_verified = Column(Boolean, default=False)
@@ -74,12 +42,11 @@ class User(Base):
     longitude = Column(DECIMAL(9, 6))
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    status = Column(Boolean,default=True)
+    status = Column(Boolean, default=True)
 
     # Relationships
     customer_rel = relationship("Customer", back_populates="user", uselist=False)
-
-    role_rel = relationship("Role", back_populates="users")  
+    role_rel = relationship("Role", back_populates="users")
     supplier = relationship("Supplier", back_populates="user", uselist=False)
     orders = relationship("Order", back_populates="customer")
     deliveries = relationship("Delivery", back_populates="delivery_person")
@@ -88,16 +55,15 @@ class User(Base):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        
-        
+
 
 class Customer(Base):
     __tablename__ = "customers"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(String(50), ForeignKey("users.user_id"), unique=True)  
+    user_id = Column(String(50), ForeignKey("users.user_id"), unique=True)
     user_name = Column(String(100), nullable=False)
-    phone  = Column(String(15), nullable=True)
+    phone = Column(String(15), nullable=True)
     address = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -105,11 +71,12 @@ class Customer(Base):
     # Relationship to User
     user = relationship("User", back_populates="customer_rel")
 
+
 # ---------- SUPPLIERS ----------
 class Supplier(Base):
-    __tablename__ = 'suppliers'
+    __tablename__ = "suppliers"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey("users.id"))
     Supplier_name = Column(String(100))
     contact = Column(String(15))
     address = Column(String(255))
@@ -119,9 +86,10 @@ class Supplier(Base):
     user = relationship("User", back_populates="supplier")
     products = relationship("Product", back_populates="supplier")
 
+
 # ---------- CATEGORIES ----------
 class Category(Base):
-    __tablename__ = 'categories'
+    __tablename__ = "categories"
     id = Column(Integer, primary_key=True, autoincrement=True)
     category_id = Column(String(50), unique=True)
     name = Column(String(100), nullable=False)
@@ -131,27 +99,27 @@ class Category(Base):
 
     # Relationship with products
     products = relationship("Product", back_populates="category")
-    status = Column(Boolean ,default=True)
+    status = Column(Boolean, default=True)
 
 
 # ---------- PRODUCTS ---------
 class Product(Base):
-    __tablename__ = 'products'
+    __tablename__ = "products"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    product_id = Column(String(50), unique=True) 
+    product_id = Column(String(50), unique=True)
     name = Column(String(100), nullable=False)
     description = Column(Text)
     price = Column(DECIMAL(10, 2))
     unit = Column(String(50))
-    stock = Column(Integer, default=0)
-    supplier_id = Column(Integer, ForeignKey('suppliers.id'))
-    category_id = Column(Integer, ForeignKey('categories.id'))
+    stock = Column(Integer)
+    supplier_id = Column(Integer, ForeignKey("suppliers.id"))
+    category_id = Column(Integer, ForeignKey("categories.id"))
     image_url = Column(String(255))
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    status = Column(Enum('active', 'inactive'), default='active')
+    status = Column(Boolean, default=True)
 
-    category = relationship("Category", back_populates="products")  
+    category = relationship("Category", back_populates="products")
     supplier = relationship("Supplier", back_populates="products")
     orders = relationship("Order", back_populates="product")
     inventory_logs = relationship("InventoryLog", back_populates="product")
@@ -159,15 +127,18 @@ class Product(Base):
 
 # ---------- ORDERS ----------
 class Order(Base):
-    __tablename__ = 'orders'
+    __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    customer_id = Column(Integer, ForeignKey('users.id'))
-    product_id = Column(Integer, ForeignKey('products.id'))
+    customer_id = Column(String(50), ForeignKey("users.user_id"))
+    product_id = Column(String(50), ForeignKey("products.product_id"))
     unit = Column(String(50))
     total_amount = Column(DECIMAL(10, 2))
-    status = Column(Enum('Pending', 'Processing', 'Out for Delivery', 'Delivered', 'Cancelled'), default='Pending')
-    payment_status = Column(Enum('Pending', 'Paid', 'Failed'), default='Pending')
+    status = Column(
+        Enum("Pending", "Processing", "Out for Delivery", "Delivered", "Cancelled"),
+        default="Pending",
+    )
+    payment_status = Column(Enum("Pending", "Paid", "Failed"), default="Pending")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -176,13 +147,16 @@ class Order(Base):
     delivery = relationship("Delivery", back_populates="order", uselist=False)
     payment = relationship("Payment", back_populates="order", uselist=False)
 
+
 # ---------- DELIVERIES ----------
 class Delivery(Base):
-    __tablename__ = 'deliveries'
+    __tablename__ = "deliveries"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    order_id = Column(Integer, ForeignKey('orders.id'))
-    delivery_person_id = Column(Integer, ForeignKey('users.id'))
-    status = Column(Enum('Pending', 'Picked Up', 'Delivered', 'Cancelled'), default='Pending')
+    order_id = Column(Integer, ForeignKey("orders.id"))
+    delivery_person_id = Column(Integer, ForeignKey("users.id"))
+    status = Column(
+        Enum("Pending", "Picked Up", "Delivered", "Cancelled"), default="Pending"
+    )
     delivered_at = Column(DateTime)
     remarks = Column(Text)
 
@@ -192,15 +166,15 @@ class Delivery(Base):
 
 # ---------- PAYMENTS ----------
 class Payment(Base):
-    __tablename__ = 'payments'
+    __tablename__ = "payments"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    order_id = Column(Integer, ForeignKey('orders.id'))
-    paid_by_user_id = Column(Integer, ForeignKey('users.id'))
-    payment_method = Column(Enum('Cash', 'Card', 'UPI', 'Wallet'))
+    order_id = Column(Integer, ForeignKey("orders.id"))
+    paid_by_user_id = Column(Integer, ForeignKey("users.id"))
+    payment_method = Column(Enum("Cash", "Card", "UPI", "Wallet"))
     amount = Column(DECIMAL(10, 2))
     transaction_id = Column(String(100))
     payment_date = Column(DateTime, default=datetime.utcnow)
-    status = Column(Enum('Success', 'Failed', 'Pending'), default='Pending')
+    status = Column(Enum("Success", "Failed", "Pending"), default="Pending")
     paid_user_name = Column(String(100))
     paid_user_email = Column(String(100))
     paid_user_phone = Column(String(15))
@@ -211,12 +185,12 @@ class Payment(Base):
 
 # ---------- INVENTORY LOGS ----------
 class InventoryLog(Base):
-    __tablename__ = 'inventory_logs'
+    __tablename__ = "inventory_logs"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    product_id = Column(Integer, ForeignKey('products.id'))
-    change_type = Column(Enum('Added', 'Removed', 'Sold', 'Returned'))
+    product_id = Column(Integer, ForeignKey("products.id"))
+    change_type = Column(Enum("Added", "Removed", "Sold", "Returned"))
     quantity = Column(Integer)
-    created_by = Column(Integer, ForeignKey('users.id'))
+    created_by = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
 
     product = relationship("Product", back_populates="inventory_logs")

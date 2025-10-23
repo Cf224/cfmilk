@@ -4,20 +4,18 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
 import random
-
+from typing import Annotated
 from Backend.config import SessionLocal, ALGORITHM, SECRET_KEY
+from Backend.schemas.schemas import PhoneRequest, OtpVerification
 from Backend.Models.model import (
     User as UserModel,
     Role as RoleModel,
-    PhoneRequest,
-    OtpVerification,
     Customer,
 )
 
-router = APIRouter()
+router = APIRouter(tags=["Login"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
-# Predefined admin phone
 ADMIN_PHONE = "8148530305"
 
 
@@ -35,12 +33,12 @@ def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(hours=24)
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM) #type: ignore
 
 
 def decode_token(token: str):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM]) #type: ignore
         return payload
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
@@ -59,8 +57,13 @@ def get_current_user(
     return user
 
 
+@router.get("/token")
+async def Token(token: Annotated[str, Depends(oauth2_scheme)]):
+    return {"Token": token}
+
+
 # ---------------- OTP Login ----------------
-@router.post("/login", tags=["Login"])
+@router.post("/login")
 async def send_otp(request: PhoneRequest, db: Session = Depends(get_db)):
     phone = request.phone
     otp = random.randint(100000, 999999)
@@ -83,7 +86,6 @@ async def send_otp(request: PhoneRequest, db: Session = Depends(get_db)):
     if not role:
         raise HTTPException(status_code=400, detail="Role not found in database")
 
-    # Create or update user
     if not user:
         last_user = db.query(UserModel).order_by(UserModel.id.desc()).first()
         next_id = 1001 if not last_user else int(last_user.user_id[4:]) + 1  # type:ignore
@@ -117,16 +119,27 @@ async def send_otp(request: PhoneRequest, db: Session = Depends(get_db)):
                 db.commit()
 
     else:
-        user.otp = otp  # type:ignore
-        user.otp_expiry = expiry_time  # type:ignore
+        user.is_verified = True  # type:ignore
+        access_token = create_access_token(
+            {"user_id": user.user_id, "role_id": user.role_id}
+        )
         db.commit()
+        
+        return {
+            "verified": True,
+            "user_name": user.user_name,
+            "user_id": user.user_id,
+            "role_id": user.role_id,
+            "access_token": access_token,
+            "token_type": "bearer", 
+        }
 
     print(f"[{role.name.upper()} OTP] Phone: {phone}, OTP: {otp}")
     return {"message": f"OTP sent successfully for {role.name}", "otp": otp}
 
 
 # ---------------- OTP Verification ----------------
-@router.post("/verify-otp", tags=["Login"])
+@router.post("/verify-otp")
 async def verify_otp(request: OtpVerification, db: Session = Depends(get_db)):
     user = db.query(UserModel).filter(UserModel.phone == request.phone).first()
 
