@@ -12,10 +12,10 @@ ADMIN_PHONE = os.getenv("ADMIN_PHONE")
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 
-USERNAME = os.getenv("USERNAME").strip() # type: ignore
-PASSWORD = os.getenv("PASSWORD").strip() # type: ignore
-HOST = os.getenv("HOST").strip() # type: ignore
-DB_NAME = os.getenv("DB_NAME").strip() # type: ignore
+USERNAME = os.getenv("USERNAME") 
+HOST = os.getenv("HOST")
+DB_NAME = os.getenv("DB_NAME")
+PASSWORD = os.getenv("PASSWORD")
 
 DATABASE_URL = f"mysql+mysqlconnector://sql12804224:{PASSWORD}@{HOST}/{DB_NAME}"
 

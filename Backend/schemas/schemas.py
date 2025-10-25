@@ -1,3 +1,4 @@
+
 from pydantic import BaseModel,Field
 from typing import Literal,Optional
 class PhoneRequest(BaseModel):
@@ -35,7 +36,7 @@ class UpdateProductStockRequest(BaseModel):
 class CustomerUpdate(BaseModel):
     user_name: Optional[str] = None
     phone : Optional[str] = None
-    address: Optional[str] = None
+    address: dict | None = None
     
 
     class Config:
