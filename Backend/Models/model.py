@@ -124,7 +124,6 @@ class Product(Base):
     orders = relationship("Order", back_populates="product")
     inventory_logs = relationship("InventoryLog", back_populates="product")
 
-
 # ---------- ORDERS ----------
 class Order(Base):
     __tablename__ = "orders"

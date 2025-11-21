@@ -128,7 +128,6 @@ async def place_order(
     }
 
 
-
 @customer_router.get("/orders")
 async def get_customer_orders(
     db: Session = Depends(get_db),

@@ -26,7 +26,6 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-
 try:
     with engine.connect() as connection:
         print("Database Connected Successfully..!")

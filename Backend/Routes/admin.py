@@ -65,6 +65,7 @@ async def get_all_users(
 
     all_users = db.query(User).all()
 
+
     if not all_users:
         raise HTTPException(status_code=404, detail="Don't have Any users in Database")
 

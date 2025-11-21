@@ -33,6 +33,7 @@ class UpdateProductStockRequest(BaseModel):
     product_name: str
     new_stock: int
 
+
 class CustomerUpdate(BaseModel):
     user_name: Optional[str] = None
     phone : Optional[str] = None
