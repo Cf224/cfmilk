@@ -155,8 +155,8 @@ async def get_customer_orders(
     current_user: UserModel = Depends(get_current_user),
 ):
     orders = db.query(Order).filter(Order.customer_id == current_user.user_id).all()
-
-    return {"orders": orders}
+    sub = db.query(Subscription).filter(Subscription.subscription_id == current_user.user_id).all()
+    return {"orders": orders,"subscriptions": sub }  
 
 
 @customer_router.post("/Subscription")
