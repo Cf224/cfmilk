@@ -19,6 +19,7 @@ def get_db():
         db.close()
 
 
+
 @app.on_event("startup")
 def startup_event():
     Base.metadata.create_all(bind=engine)

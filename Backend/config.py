@@ -1,24 +1,33 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from dotenv import load_dotenv
-import os
+
+# import os
 
 # SECRET_KEY = os.getenv("SECRET_KEY")
 # ALGORITHM = os.getenv("ALGORITHM")
 # DATABASE_URL = os.getenv("DATABASE_URL")
-load_dotenv()
-ADMIN_PHONE = os.getenv("ADMIN_PHONE")
+# ADMIN_PHONE = os.getenv("ADMIN_PHONE")
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
+# SECRET_KEY = os.getenv("SECRET_KEY")
+# ALGORITHM = os.getenv("ALGORITHM")
 
-USERNAME = os.getenv("USERNAME") 
-HOST = os.getenv("HOST")
-DB_NAME = os.getenv("DB_NAME")
-PASSWORD = os.getenv("PASSWORD")
+SECRET_KEY = ""
+ALGORITHM = "HS256"
 
-DATABASE_URL = f"mysql+mysqlconnector://sql12804224:{PASSWORD}@{HOST}/{DB_NAME}"
+# USERNAME = os.getenv("USERNAME") 
+# HOST = os.getenv("HOST")
+# DB_NAME = os.getenv("DB_NAME")
+# PASSWORD = os.getenv("PASSWORD")
 
+# DATABASE_URL = f"mysql+mysqlconnector://sql12804224:{PASSWORD}@{HOST}/{DB_NAME}"
+# DATABASE_URL = "mysql+mysqlconnector://root:DsfkAEQIibDpMesuyeeKScDLfZoTYXDq@yamanote.proxy.rlwy.net:59130/railway"
+# DATABASE_URL = "mysql+mysqlconnector://root:Test%40123@localhost/cf_milk"
+# DATABASE_URL = "mysql+mysqlconnector://root:Test%40123@localhost/cf_milk"
+
+CA_PATH = "D:\\CF_Milk_Api\\Backend\\isrgrootx1.pem"
+T = True
+# &ssl_verify_cert={T}&ssl_verify_identity={T}
+DATABASE_URL = f"mysql+mysqlconnector://6b6VzSB1uicmb9w.root:ux8FViNRiPf2p7St@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/cf_milk?ssl_ca={CA_PATH}"
 
 engine = create_engine(DATABASE_URL, echo=True)
 

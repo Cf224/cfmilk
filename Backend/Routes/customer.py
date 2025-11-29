@@ -1,13 +1,26 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
-from Backend.schemas.schemas import CustomerUpdate, CustomerResponse,CustomerOrders
-from Backend.Models.model import User as UserModel, Customer, Product,Order
+from Backend.schemas.schemas import (
+    CustomerUpdate,
+    CustomerResponse,
+    CustomerOrders,
+    Customersubscription,
+)
+from Backend.Models.model import (
+    Category,
+    User as UserModel,
+    Customer,
+    Product,
+    Order,
+    Subscription,
+)
 from Backend.config import SessionLocal
 from Backend.Routes.auth import get_current_user
 
 
 customer_router = APIRouter(prefix="/customer", tags=["Customer"])
+
 
 def get_db():
     db = SessionLocal()
@@ -22,7 +35,7 @@ async def get_customer_profile(
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ):
-    customer = db.query(Customer).filter(Customer.user_id == current_user.user_id).first()
+    customer = db.query(Customer).filter(Customer.customer_id == current_user.user_id).first()
 
     if not customer:
         raise HTTPException(status_code=404, detail="Customer profile not found")
@@ -37,7 +50,7 @@ def update_customer_profile(
     current_user: UserModel = Depends(get_current_user),
 ):
     user = db.query(UserModel).filter(UserModel.user_id == current_user.user_id).first()
-    customer = db.query(Customer).filter(Customer.user_id == current_user.user_id).first()
+    customer = db.query(Customer).filter(Customer.customer_id == current_user.user_id).first()
 
     if not user or not customer:
         raise HTTPException(status_code=404, detail="User or Customer not found")
@@ -49,30 +62,38 @@ def update_customer_profile(
         user.user_name = update_data["user_name"]
         customer.user_name = update_data["user_name"]
 
-    
     # Update Customer
     if "phone" in update_data:
         customer.phone = update_data["phone"]
     if "address" in update_data:
         customer.address = update_data["address"]
 
-    user.updated_at = datetime.utcnow() #type: ignore
-    customer.updated_at = datetime.utcnow() #type: ignore   
+    user.updated_at = datetime.utcnow()  # type: ignore
+    customer.updated_at = datetime.utcnow()  # type: ignore
 
     db.commit()
     db.refresh(user)
     db.refresh(customer)
 
-    
     return CustomerResponse(
-        user_name=user.user_name, #type:ignore
-        phone=customer.phone, #type:ignore
-        address=customer.address #type:ignore
+        user_id=customer.customer_id,  # type:ignore
+        user_name=user.user_name,  # type:ignore
+        phone=customer.phone,  # type:ignore
+        address=customer.address,  # type:ignore
     )
 
 
-@customer_router.get("/products")
-async def list_products(
+@customer_router.get("/categories")
+async def list_categories(
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
+):
+    categories = db.query(Category).filter(Category.status == 1).all()
+    return {"categories": categories}
+
+
+@customer_router.get("/all_Products")
+async def get_all_product(
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ):
@@ -92,7 +113,7 @@ async def place_order(
         raise HTTPException(status_code=404, detail="Product not found")
 
     # Check stock availability
-    if product.stock < order.quantity: #type: ignore
+    if product.stock < order.quantity:  # type: ignore
         raise HTTPException(status_code=400, detail="Insufficient stock available")
 
     # Calculate total amount
@@ -121,7 +142,7 @@ async def place_order(
 
     return {
         "message": f"Order placed successfully for {order.quantity} x {product.name}",
-        "order_id": new_order.id,
+        "order_id": new_order.order_id,
         "total_amount": total_amount,
         "remaining_stock": product.stock,
         "status": new_order.status,
@@ -133,13 +154,80 @@ async def get_customer_orders(
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ):
-    orders = (
-        db.query(Order)
-        .filter(Order.customer_id == current_user.user_id)
-        .all()
-    )
+    orders = db.query(Order).filter(Order.customer_id == current_user.user_id).all()
 
     return {"orders": orders}
 
 
+@customer_router.post("/Subscription")
+async def Subscription_route(
+    Subscriptionresponse: Customersubscription,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
+):
+    product = (
+        db.query(Product)
+        .filter(Product.name == Subscriptionresponse.product_name)
+        .first()
+    )
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found!")
 
+    total_amount = float(product.price) * Subscriptionresponse.quantity_liters  # type: ignore
+
+    new_order = Order(
+        customer_id=current_user.user_id,
+        product_id=product.product_id,
+        unit=str(Subscriptionresponse.quantity_liters),
+        total_amount=total_amount,
+        status="Subscribed",
+        payment_status="Pending",
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow(),
+    )
+
+    db.add(new_order)
+
+    if product.stock >= Subscriptionresponse.quantity_liters:  # type: ignore
+        product.stock -= Subscriptionresponse.quantity_liters  # type: ignore
+
+    db.commit()
+    db.refresh(new_order)
+
+
+    subscription = (
+        db.query(Subscription)
+        .filter(
+            Subscription.user_id == current_user.user_id,
+            Subscription.product_id == product.product_id,
+        )
+        .first()
+    )
+    if subscription:
+        raise HTTPException(
+            status_code=400, detail="You already subscribed for this product!"
+        )
+
+    new_subscription = Subscription(
+        user_id=current_user.user_id,
+        order_id = new_order.order_id,
+        product_id=product.product_id,
+        quantity_liters=Subscriptionresponse.quantity_liters,
+        user_name=current_user.user_name,
+        product_name=Subscriptionresponse.product_name,
+        start_date=Subscriptionresponse.start_date,
+        end_date=Subscriptionresponse.end_date,
+        
+    )
+    db.add(new_subscription)
+    db.commit()
+    db.refresh(new_subscription)
+
+    
+
+    return {
+        "message": f"You successfully subscribed to {Subscriptionresponse.product_name}",
+        "order_id": new_order.order_id,
+        "order_status": new_order.status,
+        "subscription_id": new_subscription.subscription_id,
+    }

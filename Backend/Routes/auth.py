@@ -44,12 +44,13 @@ def decode_token(token: str):
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
 
-
 def get_current_user(
     token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
     payload = decode_token(token)
     user_id = payload.get("user_id")
+    print("user_id", user_id)
+    print("payload", payload)
     if user_id is None:
         raise HTTPException(status_code=401, detail="Could not validate credentials")
     user = db.query(UserModel).filter(UserModel.user_id == user_id).first()
@@ -66,7 +67,7 @@ async def Token(token: Annotated[str, Depends(oauth2_scheme)]):
 # ---------------- OTP Login ----------------
 @router.post("/login")
 async def send_otp(request: PhoneRequest, db: Session = Depends(get_db)):
-    phone = request.phone
+    phone = request.phone  # type: ignore
     otp = random.randint(100000, 999999)
     expiry_time = datetime.utcnow() + timedelta(minutes=10)
 
@@ -88,11 +89,11 @@ async def send_otp(request: PhoneRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Role not found in database")
 
     if not user:
-        last_user = db.query(UserModel).order_by(UserModel.id.desc()).first()
-        next_id = 1001 if not last_user else int(last_user.user_id[4:]) + 1  # type:ignore
-        user_id = f"user{next_id}"
+        # last_user = db.query(UserModel).order_by(UserModel.id.desc()).first()
+        # next_id = 1001 if not last_user else int(last_user.user_id[4:]) + 1  # type:ignore
+        # user_id = f"user{next_id}"
+
         user = UserModel(
-            user_id=user_id,
             phone=phone,
             user_name=username,
             role_id=role.id,
@@ -106,11 +107,11 @@ async def send_otp(request: PhoneRequest, db: Session = Depends(get_db)):
 
         if role.name == "customer":  # type:ignore
             existing_customer = (
-                db.query(Customer).filter(Customer.user_id == user.user_id).first()
+                db.query(Customer).filter(Customer.customer_id == user.user_id).first()
             )
             if not existing_customer:
                 new_customer = Customer(
-                    user_id=user.user_id,
+                    customer_id=user.user_id,
                     user_name=username,
                     phone=phone,
                     address="",
@@ -129,7 +130,7 @@ async def send_otp(request: PhoneRequest, db: Session = Depends(get_db)):
         return {
             "verified": True,
             "user_name": user.user_name,
-            "user_id": user.user_id,
+            "id": user.user_id,
             "role_id": user.role_id,
             "access_token": access_token,
             "token_type": "bearer",
@@ -162,7 +163,7 @@ async def verify_otp(request: OtpVerification, db: Session = Depends(get_db)):
         "verified": True,
         "access_token": access_token,
         "token_type": "bearer",
-        "user_id": user.user_id,
+        "id": user.user_id,
         "role_id": user.role_id,
         "role_name": role.name if role else "unknown",
         "message": f"{role.name.capitalize() if role else 'User'} verified successfully",

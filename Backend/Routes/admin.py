@@ -1,12 +1,13 @@
 import os
 import shutil
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile,status
 from fastapi.staticfiles import StaticFiles
 from Backend.schemas.schemas import (
     CreateUserRequest,
     CreateCategoryRequest,
     CreateProductRequest,
     UpdateProductStockRequest,
+    
 )
 from Backend.Models.model import (
     User,
@@ -65,7 +66,6 @@ async def get_all_users(
 
     all_users = db.query(User).all()
 
-
     if not all_users:
         raise HTTPException(status_code=404, detail="Don't have Any users in Database")
 
@@ -74,7 +74,7 @@ async def get_all_users(
         role_name = user.role_rel.name if user.role_rel else "unknown"
         result.append(
             {
-                "user_id": user.user_id,
+                "id": user.user_id,
                 "user_name": user.user_name,
                 "phone": user.phone,
                 "role_id": user.role_id,
@@ -109,7 +109,8 @@ async def get_users_by_role(
     result = []
     for user in users:
         result.append(
-            {
+            {   
+                "id": user.id,
                 "user_id": user.user_id,
                 "user_name": user.user_name,
                 "phone": user.phone,
@@ -178,63 +179,67 @@ async def get_all_product(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    admin_role = current_user.role_rel.name if current_user.role_rel else ""
-    if admin_role != "admin":
-        raise HTTPException(status_code=403, detail="Only admin can add new users")
+    products = db.query(Product).filter(Product.status == 1).all()
+    return {"products": products}
+    # admin_role = current_user.role_rel.name if current_user.role_rel else ""
+    # if admin_role != "admin":
+    #     raise HTTPException(status_code=403, detail="Only admin can add new users")
 
-    all_Products = db.query(Product).all()
+    # all_Products = db.query(Product).all()
 
-    if not all_Products:
-        raise HTTPException(
-            status_code=404, detail="Don't have Any Product's in Database"
-        )
+    # if not all_Products:
+    #     raise HTTPException(
+    #         status_code=404, detail="Don't have Any Product's in Database"
+    #     )
 
-    result = []
+    # result = []
 
-    for product in all_Products:
-        # products = product.name.name if product.name else "unknown"
-        result.append(
-            {
-                "Product_id": product.id,
-                "Product_name": product.name,
-                "Price": product.price,
-                "Stock": product.stock,
-                "Unit": product.unit,
-                "Description": product.description,
-            }
-        )
+    # for product in all_Products:
+    #     # products = product.name.name if product.name else "unknown"
+    #     result.append(
+    #         {
+              
+    #             "Product_id": product.product_id,
+    #             "Product_name": product.name,
+    #             "Price": product.price,
+    #             "Stock": product.stock,
+    #             "Unit": product.unit,
+    #             "Description": product.description,
+    #         }
+    #     )
 
-    return {"users": result}
+    # return {"users": result}
 
 
-@admin_router.post("/add_product")
+
+@admin_router.post(
+    "/add_product",
+    status_code=status.HTTP_201_CREATED
+)
 async def add_product(
     request: CreateProductRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-  
     admin_role = current_user.role_rel.name if current_user.role_rel else ""
     if admin_role != "admin":
         raise HTTPException(status_code=403, detail="Only admin can add a new product!")
-
 
     category = db.query(Category).filter(Category.name == request.category_name).first()
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
 
-
+   
     existing_product = (
         db.query(Product).filter(Product.name == request.product_name).first()
     )
     if existing_product:
         raise HTTPException(status_code=400, detail="This product already exists")
 
-    last_product = db.query(Product).order_by(Product.id.desc()).first()
-    next_id = 1001 if not last_product else last_product.id + 1
-    product_id = f"Product{next_id}"
+    last_product = db.query(Product).order_by(Product.product_id.desc()).first()
+    next_id = 1001 if not last_product else last_product.product_id + 1
+    product_id = next_id
 
-    # Create product
     new_product = Product(
         product_id=product_id,
         name=request.product_name,
@@ -243,7 +248,7 @@ async def add_product(
         unit=request.unit,
         stock=request.stock,
         supplier_id=request.supplier_id,
-        category_id=category.id,
+        category_id=category.category_id,
         image_url=request.image_url,
         created_at=datetime.utcnow(),
         status=request.status,
@@ -253,14 +258,7 @@ async def add_product(
     db.commit()
     db.refresh(new_product)
 
-    return {
-        "message": f"Product '{request.product_name}' added successfully.",
-        "category": category.name,
-        "price": request.price,
-        "unit": request.unit,
-        "stock": request.stock,
-        "status": request.status,
-    }
+    return new_product  
 
 @admin_router.put("/update_product_stock")
 async def update_product_stock(
@@ -284,6 +282,7 @@ async def update_product_stock(
 
     return {
         "message": f"Stock for product '{request.product_name}' updated successfully.",
+        "product_id": product.product_id,
         "new_stock": product.stock,
     }
 
@@ -308,7 +307,7 @@ async def all_Category(
     for category in all_category:
         result.append(
             {
-                "category_id": category.category_id,
+                "id": category.category_id,
                 "category_name": category.name,
             }
         )
@@ -332,9 +331,9 @@ async def add_category(
     if existing_category:
         raise HTTPException(status_code=400, detail="This category already exists")
 
-    last_category = db.query(Category).order_by(Category.id.desc()).first()
+    last_category = db.query(Category).order_by(Category.category_id.desc()).first()
     next_id = 1001 if not last_category else int(last_category.category_id[8:]) + 1  # type:ignore
-    category_id = f"Category{next_id}"
+    category_id = next_id
 
     new_category = Category(
         category_id=category_id,
@@ -349,7 +348,7 @@ async def add_category(
 
     return {
         "message": f"Category '{request.category_name}' added successfully.",
-        "category_id": category_id,
+        "id": new_category.category_id,
         "status": request.status,
     }
 
@@ -372,7 +371,7 @@ async def get_all_orders(
     for order in all_orders:
         result.append(
             {
-                "order_id": order.id,
+                "order_id": order.order_id,
                 "customer_id": order.customer_id,
                 "product_id": order.product_id,
                 "unit": order.unit,
