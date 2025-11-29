@@ -1,6 +1,6 @@
 
 from pydantic import BaseModel,Field
-from typing import Literal,Optional
+from typing import Literal,Optional,Dict,Any
 from datetime import date
 
 class BaseSchema(BaseModel):
@@ -43,13 +43,13 @@ class UpdateProductStockRequest(BaseSchema):
 class CustomerUpdate(BaseSchema):
     user_name: Optional[str] = None
     phone : Optional[str] = None
-    address: dict | None = None
+    address: Optional[Dict[str, Any]]
     
 
 class CustomerResponse(BaseSchema):
     user_name: str
     phone : str 
-    address: Optional[str] = None
+    address:  Optional[Dict[str, Any]]
 
     
     
