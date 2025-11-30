@@ -1,0 +1,711 @@
+{
+	"info": {
+		"_postman_id": "7343af85-5175-4af3-908b-f83ba509f03a",
+		"name": "Cf_collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42541682"
+	},
+	"item": [
+		{
+			"name": "user_Auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone\":\"9629848076\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hosturl}}/login",
+							"host": [
+								"{{hosturl}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify-otp",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone\":\"8148530305\",\r\n    \"otp\": 929144\r\n\r\n}"
+						},
+						"url": {
+							"raw": "{{hosturl}}/verify-otp",
+							"host": [
+								"{{hosturl}}"
+							],
+							"path": [
+								"verify-otp"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Add_users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidXNlcjEwMDEiLCJyb2xlX2lkIjoxLCJleHAiOjE3NjAyNjM3MzV9.05mR_gSVFAlGuHrzkONF80kadFOFFYnL5H7LGdATsys",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidXNlcjEwMDEiLCJyb2xlX2lkIjoxLCJleHAiOjE3NjAyNjM3MzV9.05mR_gSVFAlGuHrzkONF80kadFOFFYnL5H7LGdATsys",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_name\":\"Dharshini\",\r\n    \"phone\":\"9626260881\",\r\n    \"role_name\":\"supplier\"\r\n\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hosturl}}/admin/add-user",
+							"host": [
+								"{{hosturl}}"
+							],
+							"path": [
+								"admin",
+								"add-user"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlX2lkIjoxLCJleHAiOjE3NjQxNzc1MjV9.e4SjfglJKzCz1lCGpRi18paioGUl8cnPtynz6THbYGY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hosturl}}/admin/users",
+							"host": [
+								"{{hosturl}}"
+							],
+							"path": [
+								"admin",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get_all_product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJyb2xlX2lkIjoxLCJleHAiOjE3NjQ1MDIyMDh9.Dw49dnqVyWd9EUasP4FIEVDsIY-QDgB4N053goSqXjw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidXNlcjEwMDEiLCJyb2xlX2lkIjoxLCJleHAiOjE3NjAzMzg2OTV9.xe9yKziZX5A4zFk7Szy3IWZACHMhF-P9ESi6lZrflmo",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{hosturl}}/admin/all_Products",
+							"host": [
+								"{{hosturl}}"
+							],
+							"path": [
+								"admin",
+								"all_Products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add_category",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJyb2xlX2lkIjoxLCJleHAiOjE3NjQ1MDIyMDh9.Dw49dnqVyWd9EUasP4FIEVDsIY-QDgB4N053goSqXjw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlX2lkIjoxLCJleHAiOjE3NjM3NDY1MzN9._Tm4-EZMHAOn3UJgKFE03y2iMsif3TX3Lk1bAux4rC8",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"category_name\":\"CowMilk\",\r\n    \"description\":\"Fresh Milk\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hosturl}}/admin/add_category",
+							"host": [
+								"{{hosturl}}"
+							],
+							"path": [
+								"admin",
+								"add_category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all_category",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidXNlcjEwMDEiLCJyb2xlX2lkIjoxLCJleHAiOjE3NjAzNDM3MzR9.DwfdUOxSL8jbyRtfpLa00skrkTVhDE2IkPLTxCrlAMQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidXNlcjEwMDEiLCJyb2xlX2lkIjoxLCJleHAiOjE3NjAzNDM3MzR9.DwfdUOxSL8jbyRtfpLa00skrkTVhDE2IkPLTxCrlAMQ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseurl}}/admin/all_Category",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"admin",
+								"all_Category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJyb2xlX2lkIjoxLCJleHAiOjE3NjQ1MDIyMDh9.Dw49dnqVyWd9EUasP4FIEVDsIY-QDgB4N053goSqXjw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlX2lkIjoxLCJleHAiOjE3NjM3NDY1MzN9._Tm4-EZMHAOn3UJgKFE03y2iMsif3TX3Lk1bAux4rC8",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"product_name\": \"Milk\",\r\n  \"description\": \"Organic cow milk\",\r\n  \"price\": 45.50,\r\n  \"unit\": \"litre\",\r\n  \"stock\": 50,\r\n  \"category_name\":\"CowMilk\"\r\n \r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hosturl}}/admin/add_product",
+							"host": [
+								"{{hosturl}}"
+							],
+							"path": [
+								"admin",
+								"add_product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stock_update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlX2lkIjoxLCJleHAiOjE3NjQxNzc1MjV9.e4SjfglJKzCz1lCGpRi18paioGUl8cnPtynz6THbYGY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlX2lkIjoxLCJleHAiOjE3NjM3NDY1MzN9._Tm4-EZMHAOn3UJgKFE03y2iMsif3TX3Lk1bAux4rC8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"product_name\" : \"ghee\",\r\n    \"new_stock\":200\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hosturl}}/admin/update_product_stock",
+							"host": [
+								"{{hosturl}}"
+							],
+							"path": [
+								"admin",
+								"update_product_stock"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload_img",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidXNlcjEwMDEiLCJyb2xlX2lkIjoxLCJleHAiOjE3NjEzMDQwMTR9.JHrks6UqCqKGThYb0lPml9onSnM8KvtvBYDq1K3LlRQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidXNlcjEwMDEiLCJyb2xlX2lkIjoxLCJleHAiOjE3NjEzMDQwMTR9.JHrks6UqCqKGThYb0lPml9onSnM8KvtvBYDq1K3LlRQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/PRAVEEN/Downloads/Animation - 1745305370442.gif"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseurl}}/admin/upload_img",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"admin",
+								"upload_img"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer",
+			"item": [
+				{
+					"name": "Get_Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlX2lkIjo0LCJleHAiOjE3NjQ1MDQxMTZ9.7HBTj4neLebVhOke7qHKNA7gc9YmMMhrBvP-5GtnLuw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1LCJyb2xlX2lkIjo0LCJleHAiOjE3NjM3NDU0MzB9.yXoubnVbaJq_NtVQBFONsNsxI0uUjyD6D6SeCdQpOZs",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{hosturl}}/customer/profile",
+							"host": [
+								"{{hosturl}}"
+							],
+							"path": [
+								"customer",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "profile_uptdate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlX2lkIjo0LCJleHAiOjE3NjQ1MDQxMTZ9.7HBTj4neLebVhOke7qHKNA7gc9YmMMhrBvP-5GtnLuw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidXNlcjEwMDEiLCJyb2xlX2lkIjo0LCJleHAiOjE3NjExMjcxNTN9.x777JafNbia_BvXbBrrNDtTmdQGubGGYj1EldSsSLSA",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"user_name\": \"Praveen C\",\r\n     \"address\": {\"Area\":\"Avani\"}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hosturl}}/customer/profile",
+							"host": [
+								"{{hosturl}}"
+							],
+							"path": [
+								"customer",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_all_Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJyb2xlX2lkIjo0LCJleHAiOjE3NjQyNTE3MzF9.A5uAftXgFB4me-W1Cyxc1eFIyX-H2z-sEhqCItCNb-c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{hosturl}}/customer/all_Products",
+							"host": [
+								"{{hosturl}}"
+							],
+							"path": [
+								"customer",
+								"all_Products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Palce_order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlX2lkIjo0LCJleHAiOjE3NjQ1MDQxMTZ9.7HBTj4neLebVhOke7qHKNA7gc9YmMMhrBvP-5GtnLuw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidXNlcjEwMDIiLCJyb2xlX2lkIjo0LCJleHAiOjE3NjEzMDE2NDh9.WH9DTkTyEuXnRnl0zxNVxfLlixGjuTBtQMz-GXwBSXU",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Milk\",\r\n    \"quantity\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hosturl}}/customer/order",
+							"host": [
+								"{{hosturl}}"
+							],
+							"path": [
+								"customer",
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Order_List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlX2lkIjo0LCJleHAiOjE3NjQ1MDQxMTZ9.7HBTj4neLebVhOke7qHKNA7gc9YmMMhrBvP-5GtnLuw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidXNlcjEwMDIiLCJyb2xlX2lkIjo0LCJleHAiOjE3NjEzMDcyNDZ9.4gWhLGiw8GhMJHPfp5r5O7T5AbRKLN6FPDR0lBVJU24",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{hosturl}}/customer/orders",
+							"host": [
+								"{{hosturl}}"
+							],
+							"path": [
+								"customer",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sub",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlX2lkIjo0LCJleHAiOjE3NjQ1MDQxMTZ9.7HBTj4neLebVhOke7qHKNA7gc9YmMMhrBvP-5GtnLuw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidXNlcjEwMDEiLCJyb2xlX2lkIjo0LCJleHAiOjE3NjExMjcxNTN9.x777JafNbia_BvXbBrrNDtTmdQGubGGYj1EldSsSLSA",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"product_name\":\"Milk\",\r\n    \"quantity_liters\":2.0,\r\n    \"start_date\":\"2025-11-29\",\r\n    \"end_date\" : \"2025-12-25\"\r\n\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/customer/Subscription",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"customer",
+								"Subscription"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all_categories",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJyb2xlX2lkIjo0LCJleHAiOjE3NjQxNzgzMjJ9.YjuRy8t56Wl_bW5BmZOUcdwXFuj5rmJ7iQEaJ22YulM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/customer/categories",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"customer",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseurl",
+			"value": ""
+		}
+	]
+}
