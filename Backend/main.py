@@ -4,8 +4,20 @@ from Backend.Routes.auth import router
 from Backend.Routes.admin import admin_router
 from Backend.Routes.customer import customer_router
 from Backend.Models.model import Role
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[""],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 
 # Base.metadata.drop_all(bind=engine)
